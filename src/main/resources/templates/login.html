@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: head('Autenticação RBAC')}"></head>
+<body class="login-wrapper d-flex align-items-center justify-content-center">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card border-0 shadow-lg p-4">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-dark mb-1">SisCoop 3FN</h3>
+                    <p class="text-muted small mb-0">Sistema Modernizado de Cooperativas de Crédito</p>
+                </div>
+
+                <div th:if="${param.error}" class="alert alert-danger py-2 small">
+                    Credenciais inválidas ou utilizador inativo.
+                </div>
+                <div th:if="${param.logout}" class="alert alert-success py-2 small">
+                    Sessão encerrada com segurança.
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Utilizador (Username)</label>
+                        <input type="text" name="username" class="form-control" placeholder="analista ou gestor" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Palavra-passe</label>
+                        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold py-2">Entrar no Sistema</button>
+                </form>
+
+                <hr class="my-4">
+                <div class="bg-light rounded p-2 small text-muted">
+                    <div class="fw-bold text-dark mb-1">Perfis para Demonstração (RF08):</div>
+                    <div>• <strong>Analista:</strong> <code>analista</code> / <code>analista123</code></div>
+                    <div>• <strong>Gestor:</strong> <code>gestor</code> / <code>gestor123</code></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

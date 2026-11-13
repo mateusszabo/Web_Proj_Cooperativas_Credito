@@ -1,0 +1,64 @@
+<!-- Arquivo: src/main/resources/templates/cooperativas/detalhe.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: head('Detalhe da Cooperativa')}"></head>
+<body class="bg-light">
+<nav th:replace="~{fragmentos :: navbar}"></nav>
+
+<div class="container pb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold" th:text="${cooperativa.nome} + ' (' + ${cooperativa.cidade} + '/' + ${cooperativa.estado} + ')'"></h3>
+        <a th:href="@{/cooperativas}" class="btn btn-secondary btn-sm">Voltar</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3">
+                <span class="text-muted small">Associados Ativos Reais (COUNT 3FN)</span>
+                <h3 class="fw-bold text-success mb-0" th:text="${associadosAtivosCount}"></h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3">
+                <span class="text-muted small">Carteira de Crédito Ativa Real (SUM)</span>
+                <h3 class="fw-bold text-primary mb-0" th:text="'R$ ' + ${#numbers.formatDecimal(carteiraAtiva, 1, 'POINT', 2, 'COMMA')}"></h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3">
+                <span class="text-muted small">Depósitos em Contas Ativas (SUM)</span>
+                <h3 class="fw-bold text-dark mb-0" th:text="'R$ ' + ${#numbers.formatDecimal(depositosAtivos, 1, 'POINT', 2, 'COMMA')}"></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold">Boletins de Indicadores Mensais Históricos (Constraint uk_ind_coop_mes)</div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Competência</th>
+                    <th>Carteira Total</th>
+                    <th>Depósitos Totais</th>
+                    <th>Resultado Líquido</th>
+                    <th>Inadimplência (%)</th>
+                    <th>Satisfação</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ind : ${indicadores}">
+                    <td class="fw-bold" th:text="${ind.mesReferencia}"></td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(ind.carteiraCreditoTotal, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(ind.depositosTotais, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(ind.resultadoLiquido, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td th:text="${ind.indiceInadimplenciaPercentual} + '%'"></td>
+                    <td th:text="${ind.satisfacaoAssociado} + ' / 10'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

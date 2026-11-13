@@ -1,0 +1,92 @@
+<!-- Arquivo: src/main/resources/templates/cooperativas/lista.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragmentos :: head('Cooperativas')}"></head>
+<body class="bg-light">
+<nav th:replace="~{fragmentos :: navbar}"></nav>
+<div th:replace="~{fragmentos :: alertas}"></div>
+
+<div class="container pb-5">
+    <h3 class="fw-bold mb-3">Gestão de Cooperativas</h3>
+
+    <div sec:authorize="hasRole('GESTOR')" class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-primary text-white fw-bold">Cadastrar Nova Cooperativa (Exclusivo ROLE_GESTOR)</div>
+        <div class="card-body">
+            <form th:action="@{/cooperativas}" th:object="${novaCooperativa}" method="post" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Nome da Cooperativa</label>
+                    <input type="text" th:field="*{nome}" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Cidade</label>
+                    <input type="text" th:field="*{cidade}" class="form-control" required>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">UF</label>
+                    <input type="text" th:field="*{estado}" maxlength="2" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Ano Fundação</label>
+                    <input type="number" th:field="*{anoFundacao}" class="form-control" value="2015" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Agências</label>
+                    <input type="number" th:field="*{agencias}" class="form-control" value="10" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Funcionários</label>
+                    <input type="number" th:field="*{funcionarios}" class="form-control" value="120" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Patrimônio de Referência (R$)</label>
+                    <input type="number" step="0.01" th:field="*{patrimonioReferencia}" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Índice Capitalização (%)</label>
+                    <input type="number" step="0.01" th:field="*{indiceCapitalizacaoPercentual}" class="form-control" required>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Salvar Cooperativa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-striped align-middle mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Localização</th>
+                    <th>Fundação (Idade)</th>
+                    <th>Patrimônio Ref.</th>
+                    <th>Índice Cap.</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${cooperativas}">
+                    <td th:text="${c.idCooperativa}"></td>
+                    <td class="fw-bold" th:text="${c.nome}"></td>
+                    <td th:text="${c.cidade} + ' - ' + ${c.estado}"></td>
+                    <td th:text="${c.anoFundacao} + ' (' + ${c.idadeCooperativaAnos} + ' anos)'"></td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(c.patrimonioReferencia, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td th:text="${c.indiceCapitalizacaoPercentual} + '%'"></td>
+                    <td class="d-flex gap-2">
+                        <a th:href="@{/cooperativas/{id}(id=${c.idCooperativa})}" class="btn btn-sm btn-info">Detalhes</a>
+                        <form sec:authorize="hasRole('GESTOR')" th:action="@{/cooperativas/{id}/excluir(id=${c.idCooperativa})}" method="post">
+                            <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

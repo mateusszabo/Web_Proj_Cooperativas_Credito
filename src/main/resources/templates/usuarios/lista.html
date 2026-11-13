@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: head('Gestão de Utilizadores RBAC')}"></head>
+<body class="bg-light">
+<nav th:replace="~{fragmentos :: navbar}"></nav>
+<div th:replace="~{fragmentos :: alertas}"></div>
+
+<div class="container pb-5">
+    <h3 class="fw-bold mb-3">Controlo de Utilizadores e Alçadas RBAC (Exclusivo ROLE_GESTOR)</h3>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-bold">Registar Novo Utilizador (Criptografia BCrypt)</div>
+        <div class="card-body">
+            <form th:action="@{/usuarios}" method="post" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Nome Completo</label>
+                    <input type="text" name="nomeCompleto" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Senha Inicial</label>
+                    <input type="password" name="senha" minlength="6" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Perfil de Alçada</label>
+                    <select name="perfil" class="form-select" required>
+                        <option th:each="p : ${perfis}" th:value="${p}" th:text="${p.descricao}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Criar Utilizador</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Nome Completo</th>
+                    <th>Perfil RBAC</th>
+                    <th>Status</th>
+                    <th>Ação</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td th:text="${u.idUsuario}"></td>
+                    <td class="fw-bold" th:text="${u.username}"></td>
+                    <td th:text="${u.nomeCompleto}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${u.perfil.name() == 'ROLE_GESTOR' ? 'bg-warning text-dark' : 'bg-info text-dark'}"
+                              th:text="${u.perfil}"></span>
+                    </td>
+                    <td>
+                        <span class="badge" th:classappend="${u.ativo ? 'bg-success' : 'bg-secondary'}"
+                              th:text="${u.ativo ? 'ATIVO' : 'INATIVO'}"></span>
+                    </td>
+                    <td>
+                        <form th:action="@{/usuarios/{id}/status(id=${u.idUsuario})}" method="post">
+                            <button type="submit" class="btn btn-sm btn-outline-dark"
+                                    th:text="${u.ativo ? 'Desativar' : 'Ativar'}"></button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

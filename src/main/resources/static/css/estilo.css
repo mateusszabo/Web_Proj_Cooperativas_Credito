@@ -1,0 +1,26 @@
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.navbar-brand {
+    letter-spacing: 0.5px;
+}
+
+.card {
+    border-radius: 0.6rem;
+}
+
+.card-kpi {
+    border-left: 4px solid #0d6efd;
+    transition: transform 0.15s ease-in-out;
+}
+
+.card-kpi:hover {
+    transform: translateY(-2px);
+}
+
+.login-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #111827 0%, #1e3a8a 100%);
+}

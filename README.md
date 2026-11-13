@@ -14,9 +14,30 @@ Este repositório contém os artefatos da **1ª Entrega** do Projeto Integrador 
 
 ---
 
+## 🚀 Entregas 2 e 3: Implementação Backend e Interface Full Stack
+A aplicação executável foi desenvolvida englobando as **Fases 5 a 10** do projeto, cumprindo integralmente os requisitos da 2ª e 3ª entregas:
+
+- **Arquitetura & Persistência (Fases 5 a 8):** Configuração do Spring Boot 3, banco H2 (persistido em arquivo) e mapeamento das 9 entidades em 3FN. Implementação das regras de negócio (cálculo de Tabela Price, máquina de estados, validação de alçadas).
+- **Saneamento e Migração (DataSeeder):** Rotina automática que carrega, higieniza e reconcilia os dados originais da planilha legada em 3FN na inicialização do sistema.
+- **Autenticação e Autorização (Fase 9):** Implementação de Spring Security com bloqueio de recursos no servidor (`@PreAuthorize`) e ocultação de elementos na interface (`sec:authorize`).
+- **Interface Responsiva (Fase 10):** Telas dinâmicas desenvolvidas com Thymeleaf e Bootstrap 5 (Dashboard, Cooperativas, Associados, Contas, Crédito, Transações e Investimentos).
+
+### 🔑 Credenciais de Acesso (Segurança RBAC)
+- **Perfil Gestor (Acesso total + aprovações de alçada):** `gestor` / `gestor123`
+- **Perfil Analista (Acesso operacional restrito):** `analista` / `analista123`
+
+### 🔧 Como Executar
+1. Execute a classe principal `CooperativasCreditoApplication.java` na IDE (ou via terminal: `mvn spring-boot:run`).
+2. **Acesso ao Sistema:** [http://localhost:8080](http://localhost:8080)
+3. **Console do Banco H2:** [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+    - *JDBC URL:* `jdbc:h2:file:./database/cooperativas_db;AUTO_SERVER=TRUE`
+    - *User:* `sa` | *Senha:* (deixar em branco)
+
+---
+
 ## 📁 Estrutura de Ficheiros (`/docs`)
-* `Entrega_01_Projeto_Programacao_Web_Cooperativas_Credito.pdf` — Relatório técnico completo.
-* `Modelagem_Cooperativas_Credito.asta` — Projeto oficial estruturado no Astah UML.
-* `01_Modelo_Relacional_Legado.png` — Diagrama ER da base legada original.
-* `02_Diagrama_Classes_e_Modelo_Evoluido.png` — Diagrama de classes e modelo relacional proposto (3FN).
-* `17_cooperativas_credito-1.xlsx` — Base de dados sintética original utilizada para o diagnóstico.
+- `Entrega_01_Projeto_Programacao_Web_Cooperativas_Credito.pdf` — Relatório técnico completo.
+- `Modelagem_Cooperativas_Credito.asta` — Projeto oficial estruturado no Astah UML.
+- `01_Modelo_Relacional_Legado.png` — Diagrama ER da base legada original.
+- `02_Diagrama_Classes_e_Modelo_Evoluido.png` — Diagrama de classes e modelo relacional proposto (3FN).
+- `17_cooperativas_credito-1.xlsx` — Base de dados sintética original utilizada para o diagnóstico.

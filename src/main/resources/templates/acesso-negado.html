@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragmentos :: head('Acesso Negado - 403')}"></head>
+<body class="bg-light">
+<nav th:replace="~{fragmentos :: navbar}"></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm text-center p-5">
+                <h1 class="display-4 fw-bold text-danger mb-2">HTTP 403</h1>
+                <h4 class="fw-bold mb-3">Acesso Negado por Alçada de Segurança (RF08)</h4>
+                <p class="text-muted">
+                    O utilizador autenticado (<strong sec:authentication="name"></strong>) não possui o perfil
+                    <code>ROLE_GESTOR</code> exigido no servidor para executar esta operação administrativa,
+                    aprovação de alçada superior, renegociação ou estorno.
+                </p>
+                <div class="mt-3">
+                    <a th:href="@{/dashboard}" class="btn btn-primary">Voltar ao Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

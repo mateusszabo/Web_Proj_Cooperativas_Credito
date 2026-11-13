@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: head('Associados')}"></head>
+<body class="bg-light">
+<nav th:replace="~{fragmentos :: navbar}"></nav>
+<div th:replace="~{fragmentos :: alertas}"></div>
+
+<div class="container pb-5">
+    <h3 class="fw-bold mb-3">Cadastro e Gestão de Associados (CRUD Completo em 3FN)</h3>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-bold"
+             th:text="${associado.idAssociado != null} ? 'Editar Associado #' + ${associado.idAssociado} : 'Novo Associado (Valida RF03: Tempo de Vínculo x Idade da Cooperativa e Faixa Etária)'">
+        </div>
+        <div class="card-body">
+            <form th:action="@{/associados}" th:object="${associado}" method="post" class="row g-3">
+                <input type="hidden" th:field="*{idAssociado}">
+                <div class="col-md-4">
+                    <label class="form-label">Cooperativa de Vínculo (FK 3FN)</label>
+                    <select name="idCooperativa" class="form-select" required>
+                        <option th:each="c : ${cooperativas}"
+                                th:value="${c.idCooperativa}"
+                                th:selected="${associado.cooperativa != null and associado.cooperativa.idCooperativa == c.idCooperativa}"
+                                th:text="${c.nome} + ' (Fundada em ' + ${c.anoFundacao} + ')'"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Segmento</label>
+                    <select th:field="*{segmento}" class="form-select" required>
+                        <option th:each="s : ${segmentos}" th:value="${s}" th:text="${s.descricao}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Cidade</label>
+                    <input type="text" th:field="*{cidade}" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">UF</label>
+                    <input type="text" th:field="*{estado}" maxlength="2" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Faixa de Idade</label>
+                    <select th:field="*{idadeFaixa}" class="form-select" required>
+                        <option th:each="f : ${faixasIdade}" th:value="${f}" th:text="${f.rotulo}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tempo Vínculo (Anos)</label>
+                    <input type="number" th:field="*{tempoAssociadoAnos}" min="0" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Renda Mensal Estimada (R$)</label>
+                    <input type="number" step="0.01" th:field="*{rendaMensalEstimada}" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Score (0 a 1000)</label>
+                    <input type="number" th:field="*{scoreCredito}" min="0" max="1000" class="form-control" required>
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-success w-100">Salvar Associado</button>
+                    <a th:if="${associado.idAssociado != null}" th:href="@{/associados}" class="btn btn-outline-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Cooperativa</th>
+                    <th>Segmento</th>
+                    <th>Cidade/UF</th>
+                    <th>Faixa / Vínculo</th>
+                    <th>Renda Mensal</th>
+                    <th>Score</th>
+                    <th>Status (Máquina de Estados)</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${associados}">
+                    <td th:text="${a.idAssociado}"></td>
+                    <td class="fw-semibold" th:text="${a.cooperativa.nome}"></td>
+                    <td th:text="${a.segmento.descricao}"></td>
+                    <td th:text="${a.cidade} + '/' + ${a.estado}"></td>
+                    <td th:text="${a.idadeFaixa.rotulo} + ' (' + ${a.tempoAssociadoAnos} + ' anos)'"></td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(a.rendaMensalEstimada, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td><span class="badge bg-dark" th:text="${a.scoreCredito}"></span></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${a.statusAssociado.name() == 'ATIVO' ? 'bg-success' : (a.statusAssociado.name() == 'SUSPENSO' ? 'bg-warning text-dark' : 'bg-secondary')}"
+                              th:text="${a.statusAssociado}"></span>
+                    </td>
+                    <td class="d-flex gap-2">
+                        <a th:href="@{/associados/{id}/editar(id=${a.idAssociado})}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <form th:action="@{/associados/{id}/status(id=${a.idAssociado})}" method="post" class="d-flex gap-1">
+                            <select name="novoStatus" class="form-select form-select-sm">
+                                <option th:each="st : ${statusValores}" th:value="${st}" th:text="${st}" th:selected="${st == a.statusAssociado}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-dark">Alterar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

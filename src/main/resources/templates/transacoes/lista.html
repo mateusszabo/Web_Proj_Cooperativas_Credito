@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragmentos :: head('Transações Financeiras')}"></head>
+<body class="bg-light">
+<nav th:replace="~{fragmentos :: navbar}"></nav>
+<div th:replace="~{fragmentos :: alertas}"></div>
+
+<div class="container pb-5">
+    <h3 class="fw-bold mb-3">Movimentações Financeiras (Valida RF02, RF03 e Estorno RBAC RF08)</h3>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-bold">Registrar Nova Transação (Valida Data >= Abertura da Conta e Conta Ativa)</div>
+        <div class="card-body">
+            <form th:action="@{/transacoes}" th:object="${novaTransacao}" method="post" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Conta Bancária</label>
+                    <select name="idConta" class="form-select" required>
+                        <option th:each="c : ${contas}"
+                                th:value="${c.idConta}"
+                                th:text="'Conta #' + ${c.idConta} + ' (' + ${c.statusConta} + ') | Abertura: ' + ${c.dataAbertura} + ' | Saldo: R$ ' + ${c.saldoMedioMensal}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tipo</label>
+                    <select th:field="*{tipoTransacao}" class="form-select" required>
+                        <option th:each="t : ${tiposTransacao}" th:value="${t}" th:text="${t.descricao}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Canal</label>
+                    <select th:field="*{canal}" class="form-select" required>
+                        <option th:each="cn : ${canais}" th:value="${cn}" th:text="${cn.descricao}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Valor (R$)</label>
+                    <input type="number" step="0.01" th:field="*{valorTransacao}" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tarifa (R$)</label>
+                    <input type="number" step="0.01" th:field="*{tarifaTransacao}" value="0.00" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Data e Hora da Operação</label>
+                    <input type="datetime-local" th:field="*{dataHora}" class="form-control">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Efetivar Transação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Conta / Titular / Cooperativa</th>
+                    <th>Data/Hora</th>
+                    <th>Tipo / Canal</th>
+                    <th>Valor</th>
+                    <th>Tarifa</th>
+                    <th>Status</th>
+                    <th>Auditoria / Estorno</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="t : ${transacoes}">
+                    <td th:text="${t.idTransacao}"></td>
+                    <td>
+                        <div class="fw-semibold" th:text="'Conta #' + ${t.conta.idConta} + ' (Assoc. #' + ${t.conta.associado.idAssociado} + ')'"></div>
+                        <small class="text-muted" th:text="${t.conta.associado.cooperativa.nome}"></small>
+                    </td>
+                    <td th:text="${t.dataHora}"></td>
+                    <td th:text="${t.tipoTransacao.descricao} + ' (' + ${t.canal.descricao} + ')'"></td>
+                    <td class="fw-bold" th:text="'R$ ' + ${#numbers.formatDecimal(t.valorTransacao, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td th:text="'R$ ' + ${#numbers.formatDecimal(t.tarifaTransacao, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${t.statusTransacao.name() == 'CONCLUIDA' ? 'bg-success' : (t.statusTransacao.name() == 'ESTORNADA' ? 'bg-warning text-dark' : 'bg-danger')}"
+                              th:text="${t.statusTransacao}"></span>
+                    </td>
+                    <td>
+                        <form sec:authorize="hasRole('GESTOR')" th:if="${t.statusTransacao.name() == 'CONCLUIDA'}"
+                              th:action="@{/transacoes/{id}/estornar(id=${t.idTransacao})}" method="post">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Estornar (Gestor)</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
